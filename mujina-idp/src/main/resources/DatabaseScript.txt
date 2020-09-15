@@ -1,0 +1,22 @@
+#These are some supporting scripts for initial initiations you can make changes as per your convinence 
+
+INSERT INTO `user_acce_mgt`.`user` (`id`, `dateCreated`, `email`, `password`, `username`) VALUES ('1', '2020-09-10 18:21:49', 'hitesh.gupta@3pillarglobal.com', '$2a$10$.ZE3cDl56dW/aiIvP4CJyOZq8e/BZGBbeQTTa0LQsTW65teQLBYeq', 'hitesh');
+
+INSERT INTO `user_acce_mgt`.`authority` (`id`, `name`) VALUES ('1', 'ROLE_ADMIN');
+
+INSERT INTO `user_acce_mgt`.`user_authority` (`user_id`, `authority_id`) VALUES ('1', '1');
+
+INSERT INTO `user_acce_mgt`.`authority` (`id`, `name`) VALUES ('2', 'ROLE_USER');
+
+INSERT INTO `user_acce_mgt`.`user_authority` (`user_id`, `authority_id`) VALUES ('1', '2');
+
+INSERT INTO `user_acce_mgt`.`user` (`id`, `dateCreated`, `email`, `password`, `username`) VALUES ('2', '2020-09-10 18:21:49', 'rishab.jain@3pillarglobal.com', '$2a$10$.ZE3cDl56dW/aiIvP4CJyOZq8e/BZGBbeQTTa0LQsTW65teQLBYeq', 'rishab');
+
+INSERT INTO `user_acce_mgt`.`user_authority` (`user_id`, `authority_id`) VALUES ('2', '1');
+
+INSERT INTO `user_acce_mgt`.`user_authority` (`user_id`, `authority_id`) VALUES ('2', '2');
+
+UPDATE `user_acce_mgt`.`user` SET `customer_name`='Hitesh Gupta', `given_name`='Hitesh', `last_name`='Gupta', `display_name`='HGupta', `schacHomeOrganization`='3pillarglobal.com', `eduPersonPrincipalName`='hitesh.gupta@3pillarglobal.com' WHERE  `id`=1;
+UPDATE `user_acce_mgt`.`user` SET `customer_name`='Rishab Jain', `given_name`='Rishab', `last_name`='Jain', `display_name`='RJain' WHERE  `id`=2;
+UPDATE `user_acce_mgt`.`user` SET `schacHomeOrganization`='3pillarglobal.com' WHERE  `id`=2;
+UPDATE `user_acce_mgt`.`user` SET `eduPersonPrincipalName`='rishab.jain@3pillarglobal.com' WHERE  `id`=2;

@@ -1,6 +1,8 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
+import mujina.idp.service.User;
+import mujina.idp.service.UserRepository;
 import mujina.saml.SAMLAttribute;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -26,10 +27,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -42,6 +45,9 @@ public class SsoController {
 
   @Autowired
   private IdpConfiguration idpConfiguration;
+  
+  @Autowired
+  private UserRepository userRepository;
 
   @GetMapping("/SingleSignOnService")
   public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -81,12 +87,13 @@ public class SsoController {
   private List<SAMLAttribute> attributes(Authentication authentication) {
     String uid = authentication.getName();
     Map<String, List<String>> result = new HashMap<>(idpConfiguration.getAttributes());
+    User user = userRepository.getUserByUsername(uid);
 
-
-    Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream()
+    Optional<Map<String, List<String>>> optionalMap = Optional.of(new TreeMap<>());
+    		/*= idpConfiguration.getUsers().stream()
       .filter(user -> user.getPrincipal().equals(uid))
       .findAny()
-      .map(FederatedUserAuthenticationToken::getAttributes);
+      .map(FederatedUserAuthenticationToken::getAttributes);*/
     optionalMap.ifPresent(result::putAll);
 
     //See SAMLAttributeAuthenticationFilter#setDetails
@@ -103,17 +110,48 @@ public class SsoController {
         authentication.getCredentials(),
         Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
       token.setAttributes(result);
-      idpConfiguration.getUsers().removeIf(existingUser -> existingUser.getPrincipal().equals(uid));
-      idpConfiguration.getUsers().add(token);
+      //idpConfiguration.getUsers().removeIf(existingUser -> existingUser.getPrincipal().equals(uid));
+      //idpConfiguration.getUsers().add(token);
     }
 
     //Provide the ability to limit the list attributes returned to the SP
-    return result.entrySet().stream()
-      .filter(entry -> !entry.getValue().stream().allMatch(StringUtils::isEmpty))
-      .map(entry -> entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
-        new SAMLAttribute(entry.getKey(), singletonList(uid)) :
-        new SAMLAttribute(entry.getKey(), entry.getValue()))
-      .collect(toList());
+    /*.map(entry -> entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
+    new SAMLAttribute(entry.getKey(), singletonList(uid)) :
+    new SAMLAttribute(entry.getKey(), entry.getValue()))*/
+		return result.entrySet().stream()//.filter(entry -> !entry.getValue().stream().allMatch(StringUtils::isEmpty))
+				.map(entry -> {
+					SAMLAttribute samlAttribute = null;
+					switch (entry.getKey()) {
+					
+					case "urn:mace:dir:attribute-def:uid":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(uid));
+						break;
+					case "urn:mace:dir:attribute-def:givenName":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getGivenName()));
+						break;
+					case "urn:mace:dir:attribute-def:cn":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getCustomerName()));
+						break;
+					case "urn:mace:dir:attribute-def:sn":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getLastName()));
+						break;
+					case "urn:mace:dir:attribute-def:displayName":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getDisplayName()));
+						break;
+					case "urn:mace:dir:attribute-def:mail":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getEmail()));
+						break;
+					case "urn:mace:terena.org:attribute-def:schacHomeOrganization":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getSchacHomeOrganization()));
+						break;
+					case "urn:mace:dir:attribute-def:eduPersonPrincipalName":
+						samlAttribute = new SAMLAttribute(entry.getKey(), singletonList(user.getEduPersonPrincipalName()));
+						break;
+					default :
+						samlAttribute = new SAMLAttribute("",Collections.EMPTY_LIST);
+					}
+					return samlAttribute;
+				}).collect(toList());
   }
 
 }

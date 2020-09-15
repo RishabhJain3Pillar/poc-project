@@ -24,6 +24,19 @@ public class User implements Serializable {
     private String username;
     private String password;
     private String email;
+    
+    @Column(name = "customer_name")
+    private String customerName;
+    @Column(name = "given_name")
+    private String givenName;
+    @Column(name = "last_name")
+    private String lastName;
+    @Column(name = "display_name")
+    private String displayName;
+    @Column(name = "schacHomeOrganization")
+    private String schacHomeOrganization;
+    @Column(name = "eduPersonPrincipalName")
+    private String eduPersonPrincipalName;
 
     private Date dateCreated;
 
@@ -94,6 +107,54 @@ public class User implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getGivenName() {
+		return givenName;
+	}
+
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getSchacHomeOrganization() {
+		return schacHomeOrganization;
+	}
+
+	public void setSchacHomeOrganization(String schacHomeOrganization) {
+		this.schacHomeOrganization = schacHomeOrganization;
+	}
+
+	public String getEduPersonPrincipalName() {
+		return eduPersonPrincipalName;
+	}
+
+	public void setEduPersonPrincipalName(String eduPersonPrincipalName) {
+		this.eduPersonPrincipalName = eduPersonPrincipalName;
+	}
+    
 /*    public Profile getProfile() {
         return profile;
     }

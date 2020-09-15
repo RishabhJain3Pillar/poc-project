@@ -24,15 +24,15 @@ public class IdpConfiguration extends SharedConfiguration {
 
   private String defaultEntityId;
   private Map<String, List<String>> attributes = new TreeMap<>();
-  private List<FederatedUserAuthenticationToken> users = new ArrayList<>();
+  //private List<FederatedUserAuthenticationToken> users = new ArrayList<>();
   private String acsEndpoint;
   private AuthenticationMethod authenticationMethod;
   private AuthenticationMethod defaultAuthenticationMethod;
   private final String idpPrivateKey;
   private final String idpCertificate;
   
-  @Autowired
-  private UserRepository userRepository;
+  //@Autowired
+  //private UserRepository userRepository;
 
   @Autowired
   public IdpConfiguration(JKSKeyManager keyManager,
@@ -53,30 +53,30 @@ public class IdpConfiguration extends SharedConfiguration {
     setEntityId(defaultEntityId);
     resetAttributes();
     resetKeyStore(defaultEntityId, idpPrivateKey, idpCertificate);
-    resetUsers();
+    //resetUsers();
     setAcsEndpoint(null);
     setAuthenticationMethod(this.defaultAuthenticationMethod);
     setSignatureAlgorithm(getDefaultSignatureAlgorithm());
   }
 
-  private void resetUsers() {
+/*  private void resetUsers() {
     users.clear();
     users.addAll(Arrays.asList(
       new FederatedUserAuthenticationToken("admin", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
         new SimpleGrantedAuthority("ROLE_ADMIN"))),
       new FederatedUserAuthenticationToken("user", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")))));
-  }
+  }*/
 
   private void resetAttributes() {
     attributes.clear();
-    putAttribute("urn:mace:dir:attribute-def:uid", "john.doe");
-    putAttribute("urn:mace:dir:attribute-def:cn", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:givenName", "John");
-    putAttribute("urn:mace:dir:attribute-def:sn", "Doe");
-    putAttribute("urn:mace:dir:attribute-def:displayName", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-    putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-    putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+    putAttribute("urn:mace:dir:attribute-def:uid", "");
+    putAttribute("urn:mace:dir:attribute-def:cn", "");
+    putAttribute("urn:mace:dir:attribute-def:givenName", "");
+    putAttribute("urn:mace:dir:attribute-def:sn", "");
+    putAttribute("urn:mace:dir:attribute-def:displayName", "");
+    putAttribute("urn:mace:dir:attribute-def:mail", "");
+    putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "");
+    putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "");
   }
 
   private void putAttribute(String key, String... values) {
